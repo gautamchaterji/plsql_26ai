@@ -1,0 +1,270 @@
+cells:
+  - kind: 2
+    value: select * from bricks;
+    languageId: oracle-sql
+  - kind: 2
+    value: "select b.*, count(*) over() as total_count\r
+
+      from bricks b;"
+    languageId: oracle-sql
+  - kind: 2
+    value: "select b.*, count(*) over(partition by colour) bricks_by_colour,
+      sum(weight) over(partition by colour) weight_per_colour\r
+
+      from bricks b order by brick_id;"
+    languageId: oracle-sql
+  - kind: 2
+    value: "select b.*,\r
+
+      \       count(*) over (\r
+
+      \         partition by shape\r
+
+      \       ) bricks_per_shape,\r
+
+      \       median ( weight ) over (\r
+
+      \         partition by shape\r
+
+      \       ) median_weight_per_shape\r
+
+      from   bricks b\r
+
+      order  by shape, weight, brick_id;"
+    languageId: oracle-sql
+  - kind: 2
+    value: "select b.*, count(*) over(order by brick_id) as running_total,\r
+
+      sum(weight) over(order by brick_id) as running_weight\r
+
+      from bricks b;"
+    languageId: oracle-sql
+  - kind: 2
+    value: "select b.brick_id, b.weight,\r
+
+      \       round ( avg ( weight ) over (\r
+
+      \         order by brick_id\r
+
+      \       ), 2 ) running_average_weight\r
+
+      from   bricks b\r
+
+      order  by brick_id;"
+    languageId: oracle-sql
+  - kind: 2
+    value: "select b.*,\r
+
+      \       count(*) over (\r
+
+      \         partition by colour\r
+
+      \         order by brick_id\r
+
+      \       ) running_total,\r
+
+      \       sum ( weight ) over (\r
+
+      \         partition by colour\r
+
+      \         order by brick_id\r
+
+      \       ) running_weight\r
+
+      from   bricks b;"
+    languageId: oracle-sql
+  - kind: 2
+    value: "select b.*,\r
+
+      \       count(*) over (\r
+
+      \         order by weight\r
+
+      \       ) running_total,\r
+
+      \       sum ( weight ) over (\r
+
+      \         order by weight\r
+
+      \       ) running_weight\r
+
+      from   bricks b\r
+
+      order  by weight;"
+    languageId: oracle-sql
+  - kind: 2
+    value: "select b.*,\r
+
+      \       count(*) over (\r
+
+      \         order by weight, brick_id\r
+
+      \         rows between unbounded preceding and current row\r
+
+      \       ) running_total,\r
+
+      \       sum ( weight ) over (\r
+
+      \         order by weight, brick_id\r
+
+      \         rows between unbounded preceding and current row\r
+
+      \       ) running_weight\r
+
+      from   bricks b\r
+
+      order  by weight, brick_id;"
+    languageId: oracle-sql
+  - kind: 2
+    value: "select b.*,\r
+
+      \       sum(weight)\r
+
+      \       over(\r
+
+      \           order by weight\r
+
+      \          rows between 1 preceding and current row\r
+
+      \       ) running_row_weight,\r
+
+      \       sum(weight)\r
+
+      \       over(\r
+
+      \           order by weight\r
+
+      \          range between 1 preceding and current row\r
+
+      \       ) running_value_weight,\r
+
+      \       sum(weight)\r
+
+      \       over(\r
+
+      \           order by weight\r
+
+      \          groups between 1 preceding and current row\r
+
+      \       ) running_group_weight\r
+
+      \  from bricks b\r
+
+      \ order by weight,\r
+
+      \          brick_id;"
+    languageId: oracle-sql
+  - kind: 2
+    value: "select b.*,\r
+
+      \       sum(weight)\r
+
+      \       over(\r
+
+      \           order by weight\r
+
+      \          rows between 1 preceding and 1 following\r
+
+      \       ) sliding_row_window,\r
+
+      \       sum(weight)\r
+
+      \       over(\r
+
+      \           order by weight\r
+
+      \          range between 1 preceding and 1 following\r
+
+      \       ) sliding_value_window,\r
+
+      \       sum(weight)\r
+
+      \       over(\r
+
+      \           order by weight\r
+
+      \          groups between 1 preceding and 1 following\r
+
+      \       ) sliding_group_window\r
+
+      \  from bricks b\r
+
+      \ order by weight;"
+    languageId: oracle-sql
+  - kind: 2
+    value: "select b.*,\r
+
+      \       count (*) over (\r
+
+      \         order by weight\r
+
+      \         range between 2 preceding and 1 preceding\r
+
+      \       ) count_weight_2_lower_than_current,\r
+
+      \       count (*) over (\r
+
+      \         order by weight\r
+
+      \         range between 1 following and 2 following\r
+
+      \       ) count_weight_2_greater_than_current\r
+
+      from   bricks b\r
+
+      order  by weight;"
+    languageId: oracle-sql
+  - kind: 2
+    value: "select colour from bricks\r
+
+      group  by colour\r
+
+      having count(*) >= 2;"
+    languageId: oracle-sql
+  - kind: 2
+    value: "select *\r
+
+      from bricks b\r
+
+      qualify count (*) over ( partition by colour ) >= 2;"
+    languageId: oracle-sql
+  - kind: 2
+    value: "with totals as (\r
+
+      \  select b.*,\r
+
+      \         sum ( weight ) over (\r
+
+      \           partition by shape\r
+
+      \         ) weight_per_shape,\r
+
+      \         sum ( weight ) over (\r
+
+      \           order by brick_id\r
+
+      \         ) running_weight_by_id\r
+
+      \  from   bricks b\r
+
+      )\r
+
+      select * from totals\r
+
+      where  weight_per_shape > 4 and\r
+
+      \       running_weight_by_id > 4\r
+
+      order  by brick_id"
+    languageId: oracle-sql
+  - kind: 2
+    value: "select brick_id, weight,\r
+
+      \       row_number() over ( order by weight ) rn,\r
+
+      \       rank() over ( order by weight ) rk,\r
+
+      \       dense_rank() over ( order by weight ) dr\r
+
+      from   bricks;"
+    languageId: oracle-sql

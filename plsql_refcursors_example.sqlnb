@@ -1,0 +1,86 @@
+cells:
+  - kind: 2
+    value: select * from dba_objects where object_name='SHRDGMR';
+    languageId: oracle-sql
+  - kind: 2
+    value: select * from dba_objects where
+      object_name=upper('gz_oim_all_students_vw');
+    languageId: oracle-sql
+  - kind: 2
+    value: select * from dba_tab_privs where owner='SATURN' and table_name='SHRDGMR';
+    languageId: oracle-sql
+  - kind: 2
+    value: select * from SHRDGMR where rownum <=10;
+    languageId: oracle-sql
+  - kind: 2
+    value: grant select on SHRDGMR to service_oim;
+    languageId: oracle-sql
+  - kind: 2
+    value: "declare\r
+
+      \   refcursor_var sys_refcursor;\r
+
+      \   sqlstatement  varchar2(200) := 'SELECT GURUCLS_CLASS_CODE FROM
+      BANSECR.GURUCLS WHERE GURUCLS_USERID = :uname';\r
+
+      \   username      bansecr.gurucls.gurucls_userid%type;\r
+
+      \   type t_classcode is\r
+
+      \      table of bansecr.gurucls.gurucls_class_code%type;\r
+
+      \   classcodes    t_classcode;\r
+
+      \   myloop pls_integer default 0;\r
+
+      begin\r
+
+      \   username := 'DESHAUN';\r
+
+      \   open refcursor_var for sqlstatement\r
+
+      \      using username;\r
+
+      \   loop\r
+
+      \      fetch refcursor_var\r
+
+      \      bulk collect into classcodes limit 50;\r
+
+      \      exit when classcodes.count = 0;\r
+
+      \      myloop := myloop + 1;\r
+
+      \      for i in 1..classcodes.count loop\r
+
+      \         dbms_output.put_line(classcodes(i) || ' (loop ' || myloop ||
+      ')');\r
+
+      \      end loop;\r
+
+      \   end loop;\r
+
+      \   close refcursor_var;\r
+
+      exception\r
+
+      \   when no_data_found then\r
+
+      \      dbms_output.put_line('No data found');\r
+
+      \   when others then\r
+
+      \      dbms_output.put_line('An unexpected error occurred: ' ||
+      sqlerrm);\r
+
+      end;\r
+
+      /"
+    languageId: oracle-sql
+  - kind: 2
+    value: "select gurucls_class_code\r
+
+      \     from bansecr.gurucls\r
+
+      \    where gurucls_userid = 'DESHAUN';"
+    languageId: oracle-sql

@@ -1,0 +1,198 @@
+cells:
+  - kind: 2
+    value: "select department_id, max(salary) as max_salary, min(salary) as
+      min_salary\r
+
+      from hr.employees\r
+
+      group by department_id ;"
+    languageId: oracle-sql
+  - kind: 2
+    value: "   set serveroutput on\r
+
+      \r
+
+      declare\r
+
+      \   type t_department_id is\r
+
+      \      table of hr.employees.department_id%type;\r
+
+      \   v_department_ids   t_department_id;\r
+
+      \   type t_salary is\r
+
+      \      table of hr.employees.salary%type;\r
+
+      \   v_max_salaries     t_salary;\r
+
+      \   v_min_salaries     t_salary;\r
+
+      \   type t_dept_maxsalary is\r
+
+      \      table of hr.employees.salary%type index by pls_integer;\r
+
+      \   v_dept_maxsalaries t_dept_maxsalary;\r
+
+      \   type t_dept_minsalary is\r
+
+      \      table of hr.employees.salary%type index by pls_integer;\r
+
+      \   v_dept_minsalaries t_dept_minsalary;\r
+
+      \   key                pls_integer;\r
+
+      begin\r
+
+      \   select nvl2(\r
+
+      \      department_id,\r
+
+      \      department_id,\r
+
+      \      0\r
+
+      \   ) as department_id,\r
+
+      \          max(salary) as max_salary,\r
+
+      \          min(salary) as min_salary\r
+
+      \   bulk collect\r
+
+      \     into\r
+
+      \      v_department_ids,\r
+
+      \      v_max_salaries,\r
+
+      \      v_min_salaries\r
+
+      \     from hr.employees\r
+
+      \    group by department_id\r
+
+      \    order by department_id;\r
+
+      \r
+
+      \   dbms_output.put_line(sql%rowcount);\r
+
+      \   \r
+
+      \   -- dbms_output.put_line('First Department ID: '
+      ||v_department_ids(1));\r
+
+      \   -- dbms_output.put_line('Second Department ID: '
+      ||v_department_ids(2));\r
+
+      \   -- dbms_output.put_line('Last Department ID: '
+      ||v_department_ids(v_department_ids.last));\r
+
+      \r
+
+      \   for i in v_department_ids.first..v_department_ids.last loop\r
+
+      \      -- dbms_output.put_line('Department ID: '\r
+
+      \      --                      || v_department_ids(i)\r
+
+      \      --                      || ', Max Salary: '\r
+
+      \      --                      || v_max_salaries(i)\r
+
+      \      --                      || ', Min Salary: ' ||
+      v_min_salaries(i));\r
+
+      \      v_dept_maxsalaries(v_department_ids(i)) := v_max_salaries(i);\r
+
+      \      v_dept_minsalaries(v_department_ids(i)) := v_min_salaries(i);\r
+
+      \   end loop;\r
+
+      \r
+
+      \   key := v_dept_maxsalaries.first;\r
+
+      \   while key is not null loop\r
+
+      \      dbms_output.put_line('Department ID: '\r
+
+      \                           || key\r
+
+      \                           || ', Max Salary: '\r
+
+      \                           || v_dept_maxsalaries(key)\r
+
+      \                           || ', Min Salary: ' ||
+      v_dept_minsalaries(key));\r
+
+      \      key := v_dept_maxsalaries.next(key);\r
+
+      \   end loop;\r
+
+      \r
+
+      \r
+
+      exception\r
+
+      \   when others then\r
+
+      \      dbms_output.put_line('An unexpected error occurred: ' ||
+      sqlerrm);\r
+
+      end;\r
+
+      /"
+    languageId: oracle-sql
+  - kind: 2
+    value: "   select nvl2(department_id, department_id, 0) as department_id,\r
+
+      \          max(salary) as max_salary,\r
+
+      \          min(salary) as min_salary   \r
+
+      \     from hr.employees\r
+
+      \    group by department_id\r
+
+      \    order by department_id;\r\n"
+    languageId: oracle-sql
+  - kind: 2
+    value: "declare\r
+
+      \   type t_test is\r
+
+      \      table of varchar2(100) index by varchar2(2);\r
+
+      \   v_test t_test;\r
+
+      \   key    varchar2(2);\r
+
+      begin\r
+
+      \   v_test('A') := 'Apple';\r
+
+      \   v_test('B') := 'Banana';\r
+
+      \   v_test('C') := 'Cherry';\r
+
+      \   key := v_test.first;\r
+
+      \   while key is not null loop\r
+
+      \      dbms_output.put_line('Key: '\r
+
+      \                           || key\r
+
+      \                           || ', Value: ' || v_test(key));\r
+
+      \      key := v_test.next(key);\r
+
+      \   end loop;\r
+
+      \r
+
+      end;"
+    languageId: oracle-sql
